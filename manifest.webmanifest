@@ -1,0 +1,20 @@
+{
+  "name": "晚饭秤｜看差值，定晚饭",
+  "short_name": "晚饭秤",
+  "description": "记录早晚体重，自动计算差值并按预设规则查看当晚饮食与运动建议。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f1e7",
+  "theme_color": "#f6f1e7",
+  "icons": [
+    {
+      "src": "./icon-source.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
