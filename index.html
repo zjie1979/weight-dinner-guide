@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f6f1e7" />
     <meta name="color-scheme" content="light" />
-    <meta name="description" content="记录早晚体重，自动计算差值并按预设规则查看当晚饮食与运动建议。" />
+    <meta name="description" content="用斤记录早晚体重和晚间衣服重量，自动计算净差值并查看当晚饮食与运动建议。" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="晚饭秤" />
@@ -37,7 +37,7 @@
           <section class="hero" aria-labelledby="hero-title">
             <p class="eyebrow">晚饭前，先看差值</p>
             <h1 id="hero-title">今天晚上<br />怎么吃？</h1>
-            <p>早上空腹称一次，晚饭前再称一次。填数字，自动查表。</p>
+            <p>早上空腹称一次，晚饭前再称一次；扣掉衣服重量，自动查表。</p>
           </section>
 
           <section class="weight-card" aria-labelledby="weight-title">
@@ -55,23 +55,35 @@
               <label class="weight-field" for="morning-weight">
                 <span class="field-kicker"><span class="sun-icon" aria-hidden="true">☀</span>早上空腹</span>
                 <span class="input-wrap">
-                  <input id="morning-weight" name="morning-weight" type="number" inputmode="decimal" min="20" max="300" step="0.1" placeholder="0.0" autocomplete="off" />
-                  <span>kg</span>
+                  <input id="morning-weight" name="morning-weight" type="number" inputmode="decimal" min="40" max="600" step="0.1" placeholder="0.0" autocomplete="off" />
+                  <span>斤</span>
                 </span>
                 <small>起床后直接上秤</small>
               </label>
 
-              <div class="minus-sign" aria-hidden="true">−</div>
+              <div class="compare-sign" aria-hidden="true">→</div>
 
               <label class="weight-field evening" for="evening-weight">
                 <span class="field-kicker"><span class="moon-icon" aria-hidden="true">●</span>晚饭之前</span>
                 <span class="input-wrap">
-                  <input id="evening-weight" name="evening-weight" type="number" inputmode="decimal" min="20" max="300" step="0.1" placeholder="0.0" autocomplete="off" />
-                  <span>kg</span>
+                  <input id="evening-weight" name="evening-weight" type="number" inputmode="decimal" min="40" max="600" step="0.1" placeholder="0.0" autocomplete="off" />
+                  <span>斤</span>
                 </span>
                 <small>吃晚饭前再上秤</small>
               </label>
             </div>
+
+            <label class="clothing-field" for="clothing-weight">
+              <span class="clothing-label">
+                <span><span class="shirt-icon" aria-hidden="true">衣</span><strong>晚间衣服重量</strong></span>
+                <small>会从晚体重中自动扣除</small>
+              </span>
+              <span class="clothing-input">
+                <input id="clothing-weight" name="clothing-weight" type="number" inputmode="decimal" min="0" max="20" step="0.1" placeholder="0.0" autocomplete="off" />
+                <span>斤</span>
+              </span>
+            </label>
+            <p class="formula-hint">净差值 = 晚饭前秤重 − 衣服重量 − 早上体重</p>
             <p class="field-error" id="field-error" role="alert"></p>
           </section>
 
@@ -81,15 +93,15 @@
                 <svg viewBox="0 0 48 48"><path d="M8 20a16 16 0 0 1 32 0v16a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V20Z"/><path d="M16 21a8 8 0 0 1 16 0"/><path d="m24 21 4-5"/></svg>
               </span>
               <div>
-                <h2>等你填入晚体重</h2>
-                <p>早体重会自动保留，晚饭前回来继续填。</p>
+                <h2>等你填完整数字</h2>
+                <p>早体重会自动保留；晚饭前再填秤重和衣服重量。</p>
               </div>
             </div>
 
             <div class="result-content" id="result-content" hidden>
               <div class="result-topline">
-                <p>晚体重 − 早体重</p>
-                <strong id="difference-value">+0.0 kg</strong>
+                <p>晚秤重 − 衣服 − 早体重</p>
+                <strong id="difference-value">+0.0 斤</strong>
               </div>
               <div class="recommendation-icon" id="recommendation-icon" aria-hidden="true"></div>
               <p class="result-kicker">今晚建议</p>
@@ -114,7 +126,7 @@
           <div class="page-heading">
             <p class="eyebrow">都在这台设备</p>
             <h1>称重记录</h1>
-            <p>按日期保存早晚体重、差值和当晚建议。</p>
+            <p>按日期保存早晚秤重、衣服重量、净差值和当晚建议。</p>
           </div>
           <div class="history-summary" id="history-summary" hidden>
             <div><span id="record-count">0</span><small>记录天数</small></div>
@@ -133,22 +145,22 @@
           <div class="page-heading">
             <p class="eyebrow">不用纠结吃什么</p>
             <h1>看数字，查表</h1>
-            <p>差值 = 晚饭前体重 − 早上空腹体重。</p>
+            <p>净差值 = 晚饭前秤重 − 晚间衣服重量 − 早上空腹体重。</p>
           </div>
 
           <div class="rule-list" aria-label="体重差与晚餐运动规则">
-            <article class="rule-item tone-protein"><strong>&lt; 0 kg</strong><span><b>吃高蛋白</b><small>蛋、鱼虾、瘦肉或豆制品任选一类</small></span></article>
-            <article class="rule-item tone-normal"><strong>0–&lt;0.6 kg</strong><span><b>吃正常晚饭</b><small>正常份量，不需要额外补偿</small></span></article>
-            <article class="rule-item tone-light"><strong>0.6–&lt;1 kg</strong><span><b>少吃 / 轻量晚餐</b><small>优先蛋白质和蔬菜，减少主食与油盐</small></span></article>
-            <article class="rule-item tone-skip"><strong>1–&lt;2 kg</strong><span><b>不吃晚饭</b><small>若不舒服，改为少量高蛋白，不要硬扛</small></span></article>
-            <article class="rule-item tone-cardio"><strong>≥ 2 kg</strong><span><b>不吃晚饭 + 爬坡有氧</b><small>仅在身体状态允许时量力进行</small></span></article>
+            <article class="rule-item tone-protein"><strong>&lt; 0 斤</strong><span><b>吃高蛋白</b><small>蛋、鱼虾、瘦肉或豆制品任选一类</small></span></article>
+            <article class="rule-item tone-normal"><strong>0–&lt;0.6 斤</strong><span><b>吃正常晚饭</b><small>正常份量，不需要额外补偿</small></span></article>
+            <article class="rule-item tone-light"><strong>0.6–&lt;1 斤</strong><span><b>少吃 / 轻量晚餐</b><small>优先蛋白质和蔬菜，减少主食与油盐</small></span></article>
+            <article class="rule-item tone-skip"><strong>1–&lt;2 斤</strong><span><b>不吃晚饭</b><small>若不舒服，改为少量高蛋白，不要硬扛</small></span></article>
+            <article class="rule-item tone-cardio"><strong>≥ 2 斤</strong><span><b>不吃晚饭 + 爬坡有氧</b><small>仅在身体状态允许时量力进行</small></span></article>
           </div>
 
           <section class="notice-card">
             <div class="notice-icon" aria-hidden="true">i</div>
             <div>
               <h2>健康提醒</h2>
-              <p>一天内的体重差会受饮水、盐分、衣物和排便影响，本工具只是执行你设定的查表规则，不是医学判断。</p>
+              <p>衣服重量会按你填写的数字从晚间秤重中扣除；一天内的体重差仍会受饮水、盐分和排便影响。本工具只是执行你设定的查表规则，不是医学判断。</p>
               <p>如出现头晕、心慌、低血糖或明显不适，应停止禁食或运动并及时进食。未成年人、孕期/哺乳期、慢性病患者或有进食障碍史者，不建议照此执行，请先咨询医生或营养师。</p>
             </div>
           </section>
