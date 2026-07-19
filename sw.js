@@ -1,5 +1,5 @@
-const CACHE_NAME = "weight-dinner-guide-v6";
-const coreAssets = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./icon-source.svg"];
+const CACHE_NAME = "weight-dinner-guide-v7";
+const coreAssets = ["./", "./index.html", "./styles.css?v=2-jin", "./app.js?v=2-jin", "./manifest.webmanifest", "./icon-source.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(coreAssets)));
