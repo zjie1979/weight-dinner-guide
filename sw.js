@@ -1,4 +1,4 @@
-const CACHE_NAME = "weight-dinner-guide-v5";
+const CACHE_NAME = "weight-dinner-guide-v6";
 const coreAssets = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./icon-source.svg"];
 
 self.addEventListener("install", (event) => {
