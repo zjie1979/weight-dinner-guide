@@ -131,7 +131,20 @@ button { -webkit-tap-highlight-color: transparent; }
 .input-wrap input::placeholder { color: #c5c1b7; }
 .input-wrap > span { color: var(--muted); font-size: 12px; font-weight: 700; }
 .weight-field small { display: block; color: #9a998f; font-size: 10px; white-space: nowrap; }
-.minus-sign { color: #a6a399; font-size: 24px; font-weight: 400; text-align: center; }
+.compare-sign { color: #a6a399; font-size: 20px; font-weight: 500; text-align: center; }
+.clothing-field { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 11px; padding: 13px 14px; border: 1px dashed #d3cbbd; border-radius: 17px; background: #f7f2e9; }
+.clothing-label { min-width: 0; }
+.clothing-label > span { display: flex; align-items: center; gap: 8px; color: #676c64; font-size: 12px; }
+.clothing-label strong { font-size: 12px; }
+.clothing-label small { display: block; margin: 4px 0 0 30px; color: #9a998f; font-size: 10px; }
+.shirt-icon { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 8px; color: #7c6b58; background: #ece3d5; font-size: 10px; font-weight: 800; }
+.clothing-input { flex: 0 0 98px; display: flex; align-items: baseline; gap: 4px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); transition: border-color 180ms ease, box-shadow 180ms ease; }
+.clothing-input:focus-within { border-color: #9b7660; box-shadow: 0 0 0 4px rgba(155, 118, 96, 0.1); }
+.clothing-input input { width: 100%; min-width: 0; border: 0; padding: 0; color: var(--ink); background: transparent; font-size: 22px; font-weight: 760; letter-spacing: -0.035em; outline: 0; appearance: textfield; }
+.clothing-input input::-webkit-inner-spin-button, .clothing-input input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.clothing-input input::placeholder { color: #c5c1b7; }
+.clothing-input > span { color: var(--muted); font-size: 11px; font-weight: 700; }
+.formula-hint { margin: 10px 2px 0; color: #85847c; font-size: 10px; line-height: 1.45; text-align: center; }
 .field-error { min-height: 16px; margin: 10px 2px 0; color: var(--red); font-size: 12px; line-height: 1.35; }
 
 .result-card { position: relative; overflow: hidden; min-height: 155px; padding: 22px; margin-bottom: 14px; background: var(--sage-dark); color: #fffdf7; transition: background 200ms ease; }
@@ -233,6 +246,9 @@ button { -webkit-tap-highlight-color: transparent; }
   .weight-card { padding-left: 14px; padding-right: 14px; }
   .weight-grid { gap: 5px; }
   .weight-field { padding-left: 10px; padding-right: 10px; }
+  .clothing-field { padding-left: 11px; padding-right: 11px; }
+  .clothing-label small { margin-left: 0; }
+  .clothing-input { flex-basis: 90px; }
   .rule-item { grid-template-columns: 84px 1fr; gap: 11px; }
 }
 
