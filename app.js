@@ -1,8 +1,8 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "weightDinnerGuide.v1.records";
-  const DRAFT_KEY = "weightDinnerGuide.v1.todayDraft";
+  const STORAGE_KEY = "weightDinnerGuide.v2.jin.records";
+  const DRAFT_KEY = "weightDinnerGuide.v2.jin.todayDraft";
 
   const rules = [
     {
@@ -50,6 +50,7 @@
   const elements = {
     morning: document.querySelector("#morning-weight"),
     evening: document.querySelector("#evening-weight"),
+    clothing: document.querySelector("#clothing-weight"),
     error: document.querySelector("#field-error"),
     resultCard: document.querySelector("#result-card"),
     resultEmpty: document.querySelector("#result-empty"),
@@ -113,13 +114,16 @@
 
   const formatDifference = (value) => {
     const normalized = Math.abs(value) < 0.05 ? 0 : value;
-    return `${normalized > 0 ? "+" : ""}${normalized.toFixed(1)} kg`;
+    return `${normalized > 0 ? "+" : ""}${normalized.toFixed(1)} 斤`;
   };
 
-  const validateWeights = (morning, evening) => {
-    if (morning !== null && (morning < 20 || morning > 300)) return "早体重请输入 20–300 kg 之间的数字。";
-    if (evening !== null && (evening < 20 || evening > 300)) return "晚体重请输入 20–300 kg 之间的数字。";
-    if (morning !== null && evening !== null && Math.abs(evening - morning) > 10) return "早晚差值超过 10 kg，请检查是否输错。";
+  const validateWeights = (morning, evening, clothing) => {
+    if (morning !== null && (morning < 40 || morning > 600)) return "早体重请输入 40–600 斤之间的数字。";
+    if (evening !== null && (evening < 40 || evening > 600)) return "晚间秤重请输入 40–600 斤之间的数字。";
+    if (clothing !== null && (clothing < 0 || clothing > 20)) return "衣服重量请输入 0–20 斤之间的数字。";
+    if (morning !== null && evening !== null && clothing !== null && Math.abs(evening - clothing - morning) > 20) {
+      return "扣除衣服后的差值超过 20 斤，请检查是否输错。";
+    }
     return "";
   };
 
@@ -127,7 +131,8 @@
     const draft = {
       date: localDateKey(),
       morning: elements.morning.value,
-      evening: elements.evening.value
+      evening: elements.evening.value,
+      clothing: elements.clothing.value
     };
     writeJSON(DRAFT_KEY, draft);
   };
@@ -135,12 +140,13 @@
   const renderResult = () => {
     const morning = parseWeight(elements.morning);
     const evening = parseWeight(elements.evening);
-    const error = validateWeights(morning, evening);
+    const clothing = parseWeight(elements.clothing);
+    const error = validateWeights(morning, evening, clothing);
     elements.error.textContent = error;
     elements.savedMessage.textContent = "";
     saveDraft();
 
-    const isComplete = morning !== null && evening !== null && !error;
+    const isComplete = morning !== null && evening !== null && clothing !== null && !error;
     elements.resultEmpty.hidden = isComplete;
     elements.resultContent.hidden = !isComplete;
     elements.resultEmpty.classList.toggle("is-hidden", isComplete);
@@ -150,7 +156,7 @@
 
     if (!isComplete) return;
 
-    const difference = Math.round((evening - morning) * 10) / 10;
+    const difference = Math.round((evening - clothing - morning) * 10) / 10;
     const rule = getRule(difference);
     elements.resultCard.classList.add(`tone-${rule.id}`);
     elements.difference.textContent = formatDifference(difference);
@@ -172,9 +178,11 @@
     if (draft?.date === dateKey) {
       elements.morning.value = draft.morning || "";
       elements.evening.value = draft.evening || "";
+      elements.clothing.value = draft.clothing ?? "";
     } else if (record) {
       elements.morning.value = record.morning;
       elements.evening.value = record.evening;
+      elements.clothing.value = record.clothing;
     }
 
     const formatter = new Intl.DateTimeFormat("zh-CN", { month: "long", day: "numeric", weekday: "long" });
@@ -185,18 +193,20 @@
   const saveRecord = () => {
     const morning = parseWeight(elements.morning);
     const evening = parseWeight(elements.evening);
-    const error = validateWeights(morning, evening);
-    if (morning === null || evening === null || error) {
-      elements.error.textContent = error || "请先填完整早体重和晚体重。";
+    const clothing = parseWeight(elements.clothing);
+    const error = validateWeights(morning, evening, clothing);
+    if (morning === null || evening === null || clothing === null || error) {
+      elements.error.textContent = error || "请填完整早体重、晚间秤重和衣服重量。";
       return;
     }
 
-    const difference = Math.round((evening - morning) * 10) / 10;
+    const difference = Math.round((evening - clothing - morning) * 10) / 10;
     const rule = getRule(difference);
     const record = {
       date: localDateKey(),
       morning: Number(morning.toFixed(1)),
       evening: Number(evening.toFixed(1)),
+      clothing: Number(clothing.toFixed(1)),
       difference,
       ruleId: rule.id,
       recommendation: rule.title,
@@ -233,8 +243,8 @@
       item.className = "history-item";
       item.innerHTML = `
         <div class="history-date"><strong>${day}</strong><small>${Number(month)}月</small></div>
-        <div class="history-body"><strong>${record.recommendation}</strong><small>${Number(record.morning).toFixed(1)} → ${Number(record.evening).toFixed(1)} kg · ${year}</small></div>
-        <div class="history-diff"><strong>${formatDifference(Number(record.difference))}</strong><small>早晚差</small></div>
+        <div class="history-body"><strong>${record.recommendation}</strong><small>早 ${Number(record.morning).toFixed(1)} · 晚 ${Number(record.evening).toFixed(1)} − 衣 ${Number(record.clothing).toFixed(1)} 斤 · ${year}</small></div>
+        <div class="history-diff"><strong>${formatDifference(Number(record.difference))}</strong><small>净差值</small></div>
         <button class="delete-record" type="button" aria-label="删除 ${month}月${day}日记录" data-delete-date="${record.date}">×</button>`;
       elements.historyList.append(item);
     });
@@ -250,6 +260,7 @@
   const resetToday = () => {
     elements.morning.value = "";
     elements.evening.value = "";
+    elements.clothing.value = "";
     localStorage.removeItem(DRAFT_KEY);
     renderResult();
     elements.morning.focus();
@@ -284,6 +295,7 @@
 
   elements.morning.addEventListener("input", renderResult);
   elements.evening.addEventListener("input", renderResult);
+  elements.clothing.addEventListener("input", renderResult);
   elements.save.addEventListener("click", saveRecord);
   elements.reset.addEventListener("click", resetToday);
   document.addEventListener("click", (event) => {
